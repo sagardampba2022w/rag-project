@@ -1,0 +1,102 @@
+blocks:
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: rager/data_loaders/synaptic_shard.py
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  groups:
+  - ingest
+  has_callback: false
+  language: python
+  name: Synaptic shard
+  retry_config: null
+  status: not_executed
+  timeout: null
+  type: data_loader
+  upstream_blocks: []
+  uuid: synaptic_shard
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: rager/transformers/ineffable_diadem.py
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  groups:
+  - chunking
+  has_callback: false
+  language: python
+  name: Ineffable diadem
+  retry_config: null
+  status: not_executed
+  timeout: null
+  type: transformer
+  upstream_blocks: []
+  uuid: ineffable_diadem
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: rager/transformers/eldritch_celestial.py
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  groups:
+  - tokenization
+  has_callback: false
+  language: python
+  name: Eldritch celestial
+  retry_config: null
+  status: not_executed
+  timeout: null
+  type: transformer
+  upstream_blocks: []
+  uuid: eldritch_celestial
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: rager/transformers/awe_inspiring_quasar.py
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  groups:
+  - embed
+  has_callback: false
+  language: python
+  name: Awe-inspiring quasar
+  retry_config: null
+  status: not_executed
+  timeout: null
+  type: transformer
+  upstream_blocks: []
+  uuid: awe_inspiring_quasar
+cache_block_output_in_memory: false
+callbacks: []
+concurrency_config: {}
+conditionals: []
+created_at: '2024-08-13 19:10:54.165942+00:00'
+data_integration: null
+description: null
+execution_framework: rag
+executor_config: {}
+executor_count: 1
+executor_type: null
+extensions: {}
+name: Stellar luminos
+notification_config: {}
+remote_variables_dir: null
+retry_config: {}
+run_pipeline_in_one_process: false
+settings:
+  triggers: null
+spark_config: {}
+tags: []
+type: python
+uuid: stellar_luminos
+variables_dir: /home/src/mage_data/rager
+widgets: []

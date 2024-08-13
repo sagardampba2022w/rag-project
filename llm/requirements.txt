@@ -1,1 +1,4 @@
-
+spacy
+python-docx
+elasticsearch
+docx
