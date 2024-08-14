@@ -6,7 +6,7 @@ from mage_ai.data_preparation.variable_manager import get_global_variable
 SAMPLE_QUERY = "When is the next cohort?"
 
 @data_loader
-def search(*args, **kwargs) -> List[Dict]:
+def search(*args, **kwargs) -> List[List[Dict]]:
     """
     query_text: str
     connection_string: str
@@ -15,7 +15,6 @@ def search(*args, **kwargs) -> List[Dict]:
     """
     
     connection_string = kwargs.get('connection_string', 'http://localhost:9200')
-    search_field = kwargs.get('search_field', 'text')
     top_k = kwargs.get('top_k', 5)
 
     # Debug: Print all kwargs
@@ -35,13 +34,25 @@ def search(*args, **kwargs) -> List[Dict]:
         query_text = SAMPLE_QUERY
     # print(f"Debug: Using query text: {query_text}")
 
-    match_query = {
-        "match": {
-            search_field: query_text
+    search_query = {
+        "size": top_k,
+        "query": {
+            "bool": {
+                "must": {
+                    "multi_match": {
+                        "query": query_text,
+                        "fields": ["question^3", "text", "section"],
+                        "type": "best_fields"
+                    }
+                },
+                "filter": {
+                    "term": {
+                        "course": "data-engineering-zoomcamp"
+                    }
+                }
+            }
         }
     }
-
-    # print("Debug: Sending match query:", match_query)
 
     es_client = Elasticsearch(connection_string)
     
@@ -51,32 +62,20 @@ def search(*args, **kwargs) -> List[Dict]:
             # print(f"Debug: Index '{index_name}' does not exist!")
             return []
 
-        # Debug: Get index mapping
-        # index_mapping = es_client.indices.get_mapping(index=index_name)
-        # print(f"Debug: Index mapping: {index_mapping}")
-
         # Perform the search
-        response = es_client.search(
-            index=index_name,
-            body={
-                "size": top_k,
-                "query": match_query,
-                "_source": True,  # Return all fields
-            },
-        )
+        response = es_client.search(index=index_name, body=search_query)
 
-        # print("Debug: Raw response from Elasticsearch:", response)
-
-        # Check if there are any hits
-        if response['hits']['total']['value'] == 0:
-            # print("Debug: No hits found for the query")
-            return []
-
+        # Print the ID of the top retrieved search result
         top_hit_id = response['hits']['hits'][0]['_id']
         print(f"ID of the top retrieved search result: {top_hit_id}")
 
-        # Return all fields for each hit
-        return [hit['_source'] for hit in response['hits']['hits'][:1]]
+        # Collect the source of all hits
+        result_docs = []
+        for hit in response['hits']['hits']:
+            result_docs.append(hit['_source'])
+
+        # Iterate and return the top 5 documents in a structured way
+        return [result_docs[i] for i in range(min(len(result_docs), 5))]
     
     except exceptions.BadRequestError as e:
         # print(f"BadRequestError: {e.info}")
