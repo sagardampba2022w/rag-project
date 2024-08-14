@@ -75,6 +75,80 @@ blocks:
   type: transformer
   upstream_blocks: []
   uuid: awe_inspiring_quasar
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file:
+      content: null
+      extension: py
+      language: python
+      modified_timestamp: 1723617917
+      name: phantasmal_flux.py
+      output: null
+      path: /home/src/llm/rager/data_exporters/phantasmal_flux.py
+      relative_path: llm/rager/data_exporters/phantasmal_flux.py
+      size: 2054
+    file_source:
+      path: rager/data_exporters/phantasmal_flux.py
+    templates:
+      elasticsearch:
+        variables:
+          connection_string: http://elasticsearch:9200
+          dimensions: null
+          index_name: documents
+          number_of_replicas: 0
+          number_of_shards: 1
+          vector_column_name: embedding
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  groups:
+  - vector_database
+  has_callback: false
+  language: python
+  name: Phantasmal flux
+  retry_config: null
+  status: failed
+  timeout: null
+  type: data_exporter
+  upstream_blocks: []
+  uuid: phantasmal_flux
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file:
+      content: null
+      extension: py
+      language: python
+      modified_timestamp: 1723619000
+      name: intergalactic_vanguard.py
+      output: null
+      path: /home/src/llm/rager/data_loaders/intergalactic_vanguard.py
+      relative_path: llm/rager/data_loaders/intergalactic_vanguard.py
+      size: 1493
+    file_source:
+      path: rager/data_loaders/intergalactic_vanguard.py
+    templates:
+      elasticsearch:
+        variables:
+          chunk_column: chunk
+          connection_string: http://elasticsearch:9200
+          index_name: documents
+          vector_column_name: embedding
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  groups:
+  - iterative_retrieval
+  has_callback: false
+  language: python
+  name: Intergalactic vanguard
+  retry_config: null
+  status: not_executed
+  timeout: null
+  type: data_loader
+  upstream_blocks: []
+  uuid: intergalactic_vanguard
 cache_block_output_in_memory: false
 callbacks: []
 concurrency_config: {}
@@ -98,5 +172,7 @@ spark_config: {}
 tags: []
 type: python
 uuid: stellar_luminos
+variables:
+  index_name: documents_20240814_085130
 variables_dir: /home/src/mage_data/rager
 widgets: []

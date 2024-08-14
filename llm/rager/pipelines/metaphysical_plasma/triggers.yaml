@@ -1,0 +1,17 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: 2024-08-14 06:28:50.022608+00:00
+  name: Daily refresh
+  pipeline_uuid: metaphysical_plasma
+  schedule_interval: '@daily'
+  schedule_type: time
+  settings:
+    skip_if_previous_running: true
+    timeout: '3600'
+    timeout_status: failed
+  sla: null
+  start_time: 2024-08-12 18:50:00+00:00
+  status: inactive
+  token: fd9fd94afedd4af88b3bc2b553b5a275
+  variables: {}

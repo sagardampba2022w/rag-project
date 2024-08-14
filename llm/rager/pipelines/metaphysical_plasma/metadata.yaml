@@ -75,7 +75,7 @@ blocks:
   language: python
   name: Sorcerous matrix
   retry_config: null
-  status: not_executed
+  status: failed
   timeout: null
   type: transformer
   upstream_blocks: []
