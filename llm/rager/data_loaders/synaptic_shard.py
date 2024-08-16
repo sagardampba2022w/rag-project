@@ -89,7 +89,7 @@ def read_faq_and_process_documents() -> List[Dict[str, Union[str, List[Dict[str,
 
     # Dictionary of course documents
     faq_documents = {
-        'llm-zoomcamp': '1qZjwHkvP0lXHiE4zdbWyUXSVfmVGzougDD6N37bat3E',
+        'llm-zoomcamp': '1T3MdwUvqCL3jrh3d3VCXQ8xE0UqRzI3bfgpfBq3ZWG0',
     }
 
     

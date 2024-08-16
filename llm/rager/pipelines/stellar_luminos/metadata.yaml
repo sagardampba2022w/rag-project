@@ -4,7 +4,8 @@ blocks:
   configuration:
     file_source:
       path: rager/data_loaders/synaptic_shard.py
-  downstream_blocks: []
+  downstream_blocks:
+  - ineffable_diadem
   executor_config: null
   executor_type: local_python
   groups:
@@ -13,7 +14,7 @@ blocks:
   language: python
   name: Synaptic shard
   retry_config: null
-  status: not_executed
+  status: executed
   timeout: null
   type: data_loader
   upstream_blocks: []
@@ -23,7 +24,8 @@ blocks:
   configuration:
     file_source:
       path: rager/transformers/ineffable_diadem.py
-  downstream_blocks: []
+  downstream_blocks:
+  - eldritch_celestial
   executor_config: null
   executor_type: local_python
   groups:
@@ -32,17 +34,19 @@ blocks:
   language: python
   name: Ineffable diadem
   retry_config: null
-  status: not_executed
+  status: executed
   timeout: null
   type: transformer
-  upstream_blocks: []
+  upstream_blocks:
+  - synaptic_shard
   uuid: ineffable_diadem
 - all_upstream_blocks_executed: true
   color: null
   configuration:
     file_source:
       path: rager/transformers/eldritch_celestial.py
-  downstream_blocks: []
+  downstream_blocks:
+  - awe_inspiring_quasar
   executor_config: null
   executor_type: local_python
   groups:
@@ -51,17 +55,19 @@ blocks:
   language: python
   name: Eldritch celestial
   retry_config: null
-  status: not_executed
+  status: executed
   timeout: null
   type: transformer
-  upstream_blocks: []
+  upstream_blocks:
+  - ineffable_diadem
   uuid: eldritch_celestial
 - all_upstream_blocks_executed: true
   color: null
   configuration:
     file_source:
       path: rager/transformers/awe_inspiring_quasar.py
-  downstream_blocks: []
+  downstream_blocks:
+  - phantasmal_flux
   executor_config: null
   executor_type: local_python
   groups:
@@ -70,10 +76,11 @@ blocks:
   language: python
   name: Awe-inspiring quasar
   retry_config: null
-  status: not_executed
+  status: executed
   timeout: null
   type: transformer
-  upstream_blocks: []
+  upstream_blocks:
+  - eldritch_celestial
   uuid: awe_inspiring_quasar
 - all_upstream_blocks_executed: true
   color: null
@@ -99,7 +106,8 @@ blocks:
           number_of_replicas: 0
           number_of_shards: 1
           vector_column_name: embedding
-  downstream_blocks: []
+  downstream_blocks:
+  - intergalactic_vanguard
   executor_config: null
   executor_type: local_python
   groups:
@@ -108,10 +116,11 @@ blocks:
   language: python
   name: Phantasmal flux
   retry_config: null
-  status: failed
+  status: executed
   timeout: null
   type: data_exporter
-  upstream_blocks: []
+  upstream_blocks:
+  - awe_inspiring_quasar
   uuid: phantasmal_flux
 - all_upstream_blocks_executed: true
   color: null
@@ -144,10 +153,11 @@ blocks:
   language: python
   name: Intergalactic vanguard
   retry_config: null
-  status: not_executed
+  status: failed
   timeout: null
   type: data_loader
-  upstream_blocks: []
+  upstream_blocks:
+  - phantasmal_flux
   uuid: intergalactic_vanguard
 cache_block_output_in_memory: false
 callbacks: []
@@ -173,6 +183,6 @@ tags: []
 type: python
 uuid: stellar_luminos
 variables:
-  index_name: documents_20240814_113001
+  index_name: documents_20240816_090320
 variables_dir: /home/src/mage_data/rager
 widgets: []

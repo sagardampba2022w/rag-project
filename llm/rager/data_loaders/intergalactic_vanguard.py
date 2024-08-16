@@ -1,88 +1,101 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 from elasticsearch import Elasticsearch, exceptions
 from mage_ai.data_preparation.variable_manager import get_global_variable
+import pandas as pd  # Import pandas for DataFrame creation
 
-# Sample text query to be used in the search
 SAMPLE_QUERY = "When is the next cohort?"
 
 @data_loader
-def search(*args, **kwargs) -> List[List[Dict]]:
+def search(*args, **kwargs) -> List[Dict]:
     """
-    query_text: str
-    connection_string: str
-    search_field: str
-    top_k: int
+    Perform a search in Elasticsearch and return matching documents.
     """
+    # Check and print the key variables
+    print("Checking Elasticsearch export variables:")
     
-    connection_string = kwargs.get('connection_string', 'http://localhost:9200')
+    # Check connection_string
+    connection_string = kwargs.get('connection_string', get_global_variable('stellar_luminos', 'connection_string') or 'http://localhost:9200')
+    print(f"  connection_string: {connection_string}")
+    
+    # Check course
+    course = kwargs.get('course', 'llm-zoomcamp')
+    print(f"  course: {course}")
+    
+    # Check top_k
     top_k = kwargs.get('top_k', 5)
-
-    # Debug: Print all kwargs
-    # print("Debug: Received kwargs:", kwargs)
-
-    # Retrieve the global index name
+    print(f"  top_k: {top_k}")
+    
+    # Check index_name (this should be set in the export pipeline)
     index_name = get_global_variable('stellar_luminos', 'index_name')
-    # print(f"Debug: Retrieved index name: {index_name}")
+    print(f"  index_name: {index_name}")
+    
+    print("------------------------")
+
     if not index_name:
-        # print("Error: Global variable 'index_name' not found.")
+        print("Error: Global variable 'index_name' not found.")
         return []
 
-    query_text = None
-    if len(args):
-        query_text = args[0]
-    if not query_text:
-        query_text = SAMPLE_QUERY
-    # print(f"Debug: Using query text: {query_text}")
-
-    search_query = {
-        "size": top_k,
-        "query": {
-            "bool": {
-                "must": {
-                    "multi_match": {
-                        "query": query_text,
-                        "fields": ["question^3", "text", "section"],
-                        "type": "best_fields"
-                    }
-                },
-                "filter": {
-                    "term": {
-                        "course": "data-engineering-zoomcamp"
-                    }
-                }
-            }
-        }
-    }
+    query_text = args[0] if args else SAMPLE_QUERY
+    print(f"Searching for: '{query_text}' in course '{course}'")
 
     es_client = Elasticsearch(connection_string)
     
     try:
-        # Debug: Check if the index exists
+        # Check if the index exists
         if not es_client.indices.exists(index=index_name):
-            # print(f"Debug: Index '{index_name}' does not exist!")
+            print(f"Error: Index '{index_name}' does not exist!")
             return []
 
+        # Construct the search query
+        search_query = {
+            "size": top_k,
+            "query": {
+                "bool": {
+                    "must": {
+                        "multi_match": {
+                            "query": query_text,
+                            "fields": ["question^3", "text", "section"],
+                            "type": "best_fields"
+                        }
+                    },
+                    "filter": {
+                        "term": {
+                            "course": course
+                        }
+                    }
+                }
+            }
+        }
+
         # Perform the search
-        response = es_client.search(index=index_name, body=search_query)
+        response = es_client.search(
+            index=index_name,
+            body=search_query
+        )
 
-        # Print the ID of the top retrieved search result
-        top_hit_id = response['hits']['hits'][0]['_id']
-        print(f"ID of the top retrieved search result: {top_hit_id}")
+        hits = response['hits']['hits']
+        if not hits:
+            print("No results found for the query.")
+            return []
 
-        # Collect the source of all hits
-        result_docs = []
-        for hit in response['hits']['hits']:
-            result_docs.append(hit['_source'])
+        results = []
+        for hit in hits:
+            doc = hit['_source']
+            doc['score'] = hit['_score']
+            results.append(doc)
 
-        # Iterate and return the top 5 documents in a structured way
-        return [result_docs[i] for i in range(min(len(result_docs), 5))]
+        print(f"Found {len(results)} results.")
+        
+        # Convert results to a DataFrame and print
+        df = pd.DataFrame(results)
+        print("\nResults in DataFrame:")
+        print(df)
+
+        return df
     
     except exceptions.BadRequestError as e:
-        # print(f"BadRequestError: {e.info}")
+        print(f"BadRequestError: {e.info}")
         return []
     except Exception as e:
-        # print(f"Unexpected error: {e}")
+        print(f"Unexpected error: {str(e)}")
         return []
-
-# Debug: Print global variables after function definition
-# print("Debug: Global variable 'index_name':", get_global_variable('stellar_luminos', 'index_name'))

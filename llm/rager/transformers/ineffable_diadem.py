@@ -54,6 +54,5 @@ def chunk_documents_pipeline(data: Dict[str, Union[str, List[Dict[str, str]]]]) 
     return documents
 
 
-for doc in transformed_documents:
-    print(doc)
+
 

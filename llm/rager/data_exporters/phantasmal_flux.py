@@ -32,7 +32,7 @@ def elasticsearch(documents: List[Dict[str, Union[Dict, str]]], *args, **kwargs)
                 "section": {"type": "text"},
                 "question": {"type": "text"},
                 "course": {"type": "keyword"},
-                "document_id": {"type": "keyword"}
+                #"document_id": {"type": "keyword"}
             }
         }
     }
@@ -49,16 +49,37 @@ def elasticsearch(documents: List[Dict[str, Union[Dict, str]]], *args, **kwargs)
     count = len(documents)
     print(f'Indexing {count} documents to Elasticsearch index {index_name}')
     last_document = None
+    failed_docs = []
     for idx, document in enumerate(documents):
         if idx % 100 == 0:
             print(f'{idx + 1}/{count}')
         
-        es_client.index(index=index_name, document=document)
+        try:
+            es_client.index(index=index_name, document=document)
+        except Exception as e:
+            print(f"Error indexing document {idx + 1}: {e}")
+            failed_docs.append(document)
         last_document = document
+
+    # Retry failed documents
+    if failed_docs:
+        print(f"Retrying {len(failed_docs)} failed documents...")
+        for doc in failed_docs:
+            try:
+                es_client.index(index=index_name, document=doc)
+            except Exception as e:
+                print(f"Retry failed for a document: {e}")
+
+    # Debugging step: Check if all documents are indexed properly
+    indexed_document_count = es_client.count(index=index_name)['count']
+    if indexed_document_count == count:
+        print(f"All {indexed_document_count} documents are indexed properly.")
+    else:
+        print(f"Indexed {indexed_document_count} documents, but expected {count}. Some documents might be missing.")
 
     # Print the last document
     if last_document:
         print("Last document indexed:")
         print(json.dumps(last_document, indent=2))
 
-    return [[d for d in documents[:10]]]
+    return [[d for d in documents[:2]]]
